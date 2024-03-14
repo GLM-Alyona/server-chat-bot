@@ -1,8 +1,22 @@
+const express = require('express');
+const { Server } = require('ws');
+const app = express();
+const port = process.env.PORT || 8080;
+
+app.use(express.json());
+
+const server = app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+
+const ws = new Server({ server });
+
+ws.on('connection', (ws, req) => {
+	
 const WS = require('ws');
 const { v4: uuid } = require('uuid');
 
 const port = process.env.PORT || 8080;
-const wss = new WS.Server({ port });
 
 const clients = {};
 const messages = [];
@@ -10,6 +24,7 @@ let messageIsPinned = false;
 let greet = false;
 
 wss.on('connection', (ws) => {
+	const ws = new WS(req);
 	const clientID = uuid();
 	clients.clientID = ws;
 	let loadBegin = -10;
@@ -229,3 +244,4 @@ wss.on('connection', (ws) => {
 		delete clients.clientID;
 	});
 });
+})
