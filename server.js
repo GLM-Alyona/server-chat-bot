@@ -16,8 +16,6 @@ ws.on('connection', (ws, req) => {
 const WS = require('ws');
 const { v4: uuid } = require('uuid');
 
-const port = process.env.PORT || 8080;
-
 const clients = {};
 const messages = [];
 let messageIsPinned = false;
