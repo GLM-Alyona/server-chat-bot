@@ -40,8 +40,7 @@ wss.on('connection', (ws, req) => {
             allLoaded: allLoaded,
           })
         );
-        return;
-      }
+        return;}
       if (messages.length >= 10) {
         if (loadArr.length < 10) {
           loadArr = messages;
@@ -81,6 +80,11 @@ wss.on('connection', (ws, req) => {
             JSON.stringify({
               init: true,
               messages: messages,
+              id: mes.id,
+              usertype: mes.usertype,
+              username: mes.username,
+              date: mes.date,
+              content: mes.content,
             })
           );
         });
@@ -99,13 +103,17 @@ wss.on('connection', (ws, req) => {
         return;
       }
       if (messages.length) {
+        const firstMessage = messages[0];
+        if (firstMessage.usertype !== 'user' && firstMessage.usertype !== 'bot') {
+          return;
+        }
         clients[clientID].send(
           JSON.stringify({
-            id: messages[0].id,
-            usertype: messages[0].usertype,
-            username: messages[0].username,
-            date: messages[0].date,
-            content: messages[0].content,
+            id: firstMessage.id,
+            usertype: firstMessage.usertype,
+            username: firstMessage.username,
+            date: firstMessage.date,
+            content: firstMessage.content,
           })
         );
         greet = true;
@@ -157,8 +165,6 @@ wss.on('connection', (ws, req) => {
       messages.forEach((mes) => {
         if (mes.id === message.id) {
           mes.favorite = message.favorite;
-        } else {
-          return;
         }
       });
     } else if (message.pinMessage) {
@@ -171,7 +177,7 @@ wss.on('connection', (ws, req) => {
             return;
           }
           mes.pinned = message.pinned;
-          messageIsPinned = true;
+         messageIsPinned = true;
           clients[clientID].send(
             JSON.stringify({ pinMessage: true, message: mes })
           );
